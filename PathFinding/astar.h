@@ -21,7 +21,9 @@ public:
 
 	std::stack<Node> computeShortestPath(Node start);
 
-	Node initGoalNode(float x, float y, int n1, int n2);
+	Node initGoalNode(int n); // Goal is placed on an existing node
+	Node initGoalNode(float x, float y, int n1, int n2); // Goal is placed inbetween existing nodes
+	Node createStartNode(int n);
 	Node createStartNode(float x, float y, int n1, int n2);
 
 	void removeEdge(Node &n1, Node &n2);

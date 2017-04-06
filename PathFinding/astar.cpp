@@ -41,7 +41,7 @@ std::stack<Node> AStar::computeShortestPath(Node start) {
 		// current := node in open set having lowest fScore value
 		Node *current = OPEN.pop();
 
-		// if (curruent = goal) return path
+		// if (current = goal) return path
 		if (*current == nMap[GOAL_NODE]) {
 			// return reconstruct_path(current)
 			while (*current != start) {
@@ -133,12 +133,29 @@ float AStar::dist(Node n1, Node n2) {
 	return dist;
 }
 
+Node AStar::createStartNode(int n) {
+	if (n < 1 || n >= NUM_NODES) {
+		std::cerr << "[AStar::createStartNode] Error: Node does not exist\n";
+		return Node();
+	}
+	return nMap[n];
+}
+
 Node AStar::createStartNode(float x, float y, int n1, int n2) {
 	return Node(x, y, &nMap[n1], &nMap[n2], NULL, NULL);
 }
 
+Node AStar::initGoalNode(int n) {
+	if (n < 1 || n >= NUM_NODES) {
+		std::cerr << "[AStar::initGoalNode] Error: Node does not exist\n";
+		return Node();
+	}
+	nMap[GOAL_NODE] = nMap[n]; // Node 'n' neighbors do not need to be revised; Goal node only used for terminal checks and distance calculations
+	return nMap[GOAL_NODE];
+}
+
 Node AStar::initGoalNode(float x, float y, int n1, int n2) {
-	if (n1 < 0 || n1 > NUM_NODES || n2 < 0 || n2 > NUM_NODES) {
+	if (n1 < 1 || n1 >= NUM_NODES || n2 < 1 || n2 >= NUM_NODES) {
 		std::cerr << "[AStar::initGoalNode] Error: Cannot add/remove edges, Node(s) don't exist\n";
 		return Node();
 	}

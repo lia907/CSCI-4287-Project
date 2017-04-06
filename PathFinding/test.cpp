@@ -1,7 +1,7 @@
 /*  Author: Will Rooney
 *      Date Created: 04/05/2017
 *      Last Modification Date: 04/05/2017
-*      Program Description: Sandbox to test pathfinding algorithms
+*      Program Description: Sandbox to test pathfinding algorithms. Refer to ../map.png to follow the computed path
 */
 #include "astar.h"
 
@@ -12,11 +12,19 @@ int main(int argc, char* argv[])
 	AStar search;
 	std::stack<Node> path;
 
-	// Initialize goal (x, y, neighbor1, neighbor2), and get a copy of the goal node
-	Node goal = search.initGoalNode(37.5, 5.0, 16, 22);
+	/* Initialize goal (x, y, neighbor1, neighbor2), and get a copy of the goal node
+	 * alternatively: initGoalNode(node number) // if goal is placed on existing node
+	*/
 
-	// Set current position (x, y, neighbor1, neighbor2)
-	Node current = search.createStartNode(2.5, 30.0, 1, 7);
+	Node goal = search.initGoalNode(37.5, 5.0, 16, 22); // create goal inbetween node 16 and 22
+	//Node goal = search.initGoalNode(21); // create goal on node 21
+
+	/* Set current position (x, y, neighbor1, neighbor2)
+	 * alternatively: createStartNode(node number) // if start is placed on existing node
+	*/
+
+	Node current = search.createStartNode(2.5, 30.0, 1, 7); // create start/current inbetween node 1 and 7
+	//Node current = search.createStartNode(2); // create start/current on node 2
 
 	// Compute intial shortest path from 'current' node
 	std::cout << "Computing initial shortest path...\n\n";
