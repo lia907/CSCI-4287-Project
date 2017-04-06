@@ -16,17 +16,16 @@ NodePQueue::NodePQueue() {
 
 Node* NodePQueue::pop() {
 	int i = 0, min_i = -1, size = this->data.size();
-	if (size == 1) {
-		Node *n = data[0];
-		data.erase(data.begin());
-		return n;
-	}
 	float min = std::numeric_limits<float>::infinity();
 	for (; i < size; ++i) {
 		if (data[i]->f < min) {
 			min = data[i]->f;
 			min_i = i;
 		}
+	}
+	if (min_i == -1) {
+		std::cerr << "[NodePQueue:pop()] Error: popping an empy queue\n";
+		return &Node();
 	}
 	Node *n = data[min_i];
 	data.erase(data.begin() + min_i);

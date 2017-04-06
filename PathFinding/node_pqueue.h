@@ -12,6 +12,7 @@
 #ifndef NODE_PQUEUE_H
 #define NODE_PQUEUE_H
 
+#include <iostream>
 #include <vector>
 #include "node.h"
 

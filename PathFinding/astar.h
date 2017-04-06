@@ -11,7 +11,6 @@
 #ifndef ASTAR_H
 #define ASTAR_H
 
-#include <iostream>
 #include <stack>
 #include <string>
 #include "node_pqueue.h"
@@ -26,7 +25,6 @@ public:
 	Node createStartNode(float x, float y, int n1, int n2);
 
 	void removeEdge(Node &n1, Node &n2);
-	void createEdge(Node &n1, Node &n2);
 
 	std::string getNodeName(Node n); // For debugging/testing
 

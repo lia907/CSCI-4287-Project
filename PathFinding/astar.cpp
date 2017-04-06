@@ -30,6 +30,7 @@ std::string AStar::getNodeName(Node n) {
 }
 
 std::stack<Node> AStar::computeShortestPath(Node start) {
+	std::stack<Node> path;
 	// OPEN set := start; start G score := 0; start H score heuristic(start, goal)
 	start.g = 0;
 	start.f = dist(start, nMap[GOAL_NODE]);
@@ -43,7 +44,6 @@ std::stack<Node> AStar::computeShortestPath(Node start) {
 		// if (curruent = goal) return path
 		if (*current == nMap[GOAL_NODE]) {
 			// return reconstruct_path(current)
-			std::stack<Node> path;
 			while (*current != start) {
 				path.push(*current);
 				current = current->parent;
@@ -58,7 +58,7 @@ std::stack<Node> AStar::computeShortestPath(Node start) {
 		// add current to closed set
 		current->Closed = true;
 
-		// Expand currents neighbors
+		// Expand current's neighbors
 		Node *neighbor;
 		for (int i = 0; i < NODE_MAX_NEIGHBORS; ++i) {
 			neighbor = current->neighbors[i];
@@ -79,11 +79,11 @@ std::stack<Node> AStar::computeShortestPath(Node start) {
 	}
 	// return failure
 	std::cerr << "[AStar::computeShortestPath] Error: Search Failed\n";
-	std::stack<Node> emptyPath;
-	return emptyPath;
+	return path;
 }
 
 void AStar::removeEdge(Node &n1, Node &n2) {
+	// Find the nMap indexes for n1/n2
 	int i = 0, j = 0, size = NUM_NODES;
 	int n1_i = -1, n2_i = -1;
 	for (; i < NUM_NODES; ++i) {
@@ -107,40 +107,21 @@ void AStar::removeEdge(Node &n1, Node &n2) {
 	else if (!nMap[n1_i].deleteNeighbor(&nMap[n2_i])) {
 		std::cerr << "Failed to delete neighbor for n1\n";
 	}
+	else {
+		// propogate changes to main
+		n1.deleteNeighbor(&nMap[n2_i]);
+	}
 
-	if (n1_i == -1) {
+	if (n2_i == -1) {
 		std::cerr << "Error: Cannot remove edge. Node 'n2' doesn't exist\n";
 	}
 	else if (!nMap[n2_i].deleteNeighbor(&nMap[n1_i])) {
 		std::cerr << "Failed to delete neighbor for n2\n";
 	}
-
-	// propogate changes to main
-	n1.deleteNeighbor(&nMap[n2_i]);
-	n2.deleteNeighbor(&nMap[n1_i]);
-}
-
-void AStar::createEdge(Node &n1, Node &n2) {
-	int i = 0, j = 0, size = NUM_NODES;
-	int n1_i = -1, n2_i = -1;
-	for (; i < NUM_NODES; ++i) {
-		if (n1 == nMap[i]) {
-			n1_i = i;
-		}
-		if (n2 == nMap[i]) {
-			n2_i = i;
-		}
+	else {
+		// propogate changes to main
+		n2.deleteNeighbor(&nMap[n1_i]);
 	}
-	if (n1_i == -1 || n2_i == -1) {
-		std::cerr << "Error: Cannot remove edge Node(s) don't exist\n";
-		return;
-	}
-	nMap[n1_i].addNeighbor(&nMap[n2_i]);
-	nMap[n2_i].addNeighbor(&nMap[n1_i]);
-
-	// propogate changes to main
-	n1.addNeighbor(&nMap[n2_i]);
-	n2.addNeighbor(&nMap[n1_i]);
 }
 
 float AStar::dist(Node n1, Node n2) {

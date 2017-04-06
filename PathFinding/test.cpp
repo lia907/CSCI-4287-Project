@@ -1,7 +1,7 @@
 /*  Author: Will Rooney
 *      Date Created: 04/05/2017
 *      Last Modification Date: 04/05/2017
-*      Program Description: Sandbox to test pathfinding algorithms. Refer to ../map.png to follow the computed path
+*      Program Description: Sandbox to test pathfinding algorithms
 */
 #include "astar.h"
 
@@ -70,11 +70,11 @@ int main(int argc, char* argv[])
 		}
 
 		// Arrived at next node
-		std::cout << "Arrived at next node!\n\n";
 		if (next == goal) {
 			std::cout << "Reached the goal!\n";
 			break;
 		}
+		std::cout << "Arrived at next node!\n\n";
 		current = next;
 		next = path.top();
 		path.pop();
