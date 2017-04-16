@@ -3,7 +3,7 @@
 *
 * Author: Will Rooney
 * Date Created: 03/24/2017
-* Date Modified: 04/05/2017
+* Date Modified: 04/16/2017
 *
 * Description:
 *  Defines class Node with  (x,y) coordinates,
@@ -16,6 +16,7 @@
 
 #include <limits>
 #include <vector>
+#include <iostream>
 
 #define NODE_MAX_NEIGHBORS 	4	// Maximum number of paths that can be taken from a particular node 4
 #define NUM_NODES			23	// Graph size = 22 Nodes + Goal Node
@@ -31,7 +32,7 @@ public:
 	void setNeighborNodes(Node *n1, Node *n2, Node *n3, Node *n4);
 	void calcNeighborCosts();
 
-	Node *getNext(); // Get minium neighbor traversal cost
+	Node getNext(); // Get minium neighbor traversal cost
 
 	void setPos(float x, float y) { this->x = x; this->y = y; }
 
@@ -43,21 +44,24 @@ public:
 		std::swap(this->rhs, n.rhs);
 		std::swap(this->g, n.g);
 		std::swap(this->neighbors, n.neighbors);
-		/*std::swap(this->neighbors[0].first, n.neighbors[0].first);
-		std::swap(this->neighbors[0].second, n.neighbors[0].second);
-		std::swap(this->neighbors[1].first, n.neighbors[1].first);
-		std::swap(this->neighbors[1].second, n.neighbors[1].second);
-		std::swap(this->neighbors[2].first, n.neighbors[2].first);
-		std::swap(this->neighbors[2].second, n.neighbors[2].second);
-		std::swap(this->neighbors[3].first, n.neighbors[3].first);
-		std::swap(this->neighbors[3].second, n.neighbors[3].second);*/
 	}
 	Node& operator=(Node n) {
 		n.swap(*this);
 		return *this;
 	}
 
-	bool operator == (const Node& rhs) const { return (this->x == rhs.x && this->y == rhs.y); }
+	/*void printNode() {
+		std::cout << "Node properties:\n";
+		std::cout << "\t(x, y) = " << '(' << x << ", " << y << ")\n";
+		std::cout << "\tNeighbor 1 -> Address: " << neighbors[0].first << " | Cost: " << neighbors[0].second << '\n';
+		std::cout << "\tNeighbor 2 -> Address: " << neighbors[1].first << " | Cost: " << neighbors[1].second << '\n';
+		std::cout << "\tNeighbor 3 -> Address: " << neighbors[2].first << " | Cost: " << neighbors[2].second << '\n';
+		std::cout << "\tNeighbor 4 -> Address: " << neighbors[3].first << " | Cost: " << neighbors[3].second << '\n';
+	}*/
+
+	bool operator == (const Node& rhs) const { 
+		return (this->x == rhs.x && this->y == rhs.y);
+	}
 	bool operator != (const Node& rhs) const { return !(*this == rhs); }
 
 	// Each neighbor has an edge cost associated with it ( e.g., c(this, neighbor) )

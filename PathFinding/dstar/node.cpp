@@ -3,7 +3,7 @@
 *
 * Author: Will Rooney
 * Date Created: 03/24/2017
-* Date Modified: 04/05/2017
+* Date Modified: 04/16/2017
 *
 * Description:
 *  Implementation of node.h
@@ -160,7 +160,7 @@ void Node::calcNeighborCosts() {
 		this->neighbors[3].second = inf;
 }
 
-Node *Node::getNext() { // Find the cheapest successor of *this : for all neighbors n -> min( cost(this, n) + g(n))
+Node Node::getNext() { // Find the cheapest successor of *this : for all neighbors n -> min( cost(this, n) + g(n))
 	float min = std::numeric_limits<float>::infinity();
 	Node *succ = NULL;
 	if (neighbors[0].first != NULL) {
@@ -191,7 +191,9 @@ Node *Node::getNext() { // Find the cheapest successor of *this : for all neighb
 			succ = neighbors[3].first;
 		}
 	}
-	return succ;
+	if (succ == NULL)
+		return Node();
+	return *succ;
 }
 
 float Node::dist(Node n) {

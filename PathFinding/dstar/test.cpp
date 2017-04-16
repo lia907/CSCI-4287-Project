@@ -1,6 +1,6 @@
 /*  Author: Will Rooney
 *      Date Created: 04/05/2017
-*      Last Modification Date: 04/05/2017
+*      Last Modification Date: 04/16/2017
 *      Program Description: Sandbox to test pathfinding algorithms. Refer to ../map.png to follow the computed path
 */
 #include "dstar.h"
@@ -10,86 +10,57 @@ int main(int argc, char* argv[])
 	/* Setup Section */
 	std::cout << "Initializing...\n";
 	DStar search;
+	Node next;
 
 	/* Set current position (x, y, neighbor1, neighbor2)
 	* alternatively: createStartNode(node number) // if start is placed on existing node
 	*/
-	Node *start = search.createStartNode(2.5, 30.0, 1, 7); // create start/current inbetween node 1 and 7
-	//Node *start = search.createStartNode(2); // create start/current on node 2
+	Node current = search.createStartNode(25.0, 300.0, 1, 7); // create start/current inbetween node 1 and 7
+	//Node current = search.createStartNode(2); // create start/current on node 2
 	
 
 	/* Initialize goal (x, y, neighbor1, neighbor2), and get a copy of the goal node
 	 * alternatively: initGoalNode(node number) // if goal is placed on existing node
 	*/
-	Node goal = search.initGoalNode(37.5, 5.0, 16, 22); // create goal inbetween node 16 and 22
+	Node goal = search.initGoalNode(375.0, 50.0, 16, 22); // create goal inbetween node 16 and 22
 	//Node goal = search.initGoalNode(21); // create goal on node 21
 
-	Node last = *start;
-	Node *next;
 
 	// Compute intial shortest path
-	std::cout << "Computing initial shortest path...\n\n";
+	std::cout << "Computing initial shortest path from (" << current.x << ", " << current.y << ") and (" << goal.x << ", " << goal.y << ")\n\n";
 	search.computeShortestPath();
 
-	// rhs(start) check - solution #1
-	bool INIT_START = true;
 
-	int increment = 0, obstacle = 5; // when increment == obstacle calculate new path; obstacle is number of steps before path is blocked
-	while (*start != goal) {
+	int step = 0; // when step > var calculate new path; var is number of steps before path is blocked
+	while (current != goal) {
 		/* Loop Section */
-		increment++;
-
-		// if rhs(start) == inf) then there is no known path
-		// This will always be true on initial run
-		// Two Solutions:
-		//		1) Skip check on first while loop
-		//		2) If Initial Start Node is not on the static node graph, add it.
-		//			This will add the initial start node to all future searches and
-		//			the rhs value will be thus updated. If the path must traverse back
-		//			to the initial start node then one iteration will pass through this node
-		//			where there are no branches/intersections
-		if (start->rhs == std::numeric_limits<float>::infinity()) {
-			if (INIT_START) {
-				INIT_START = false;
-			}
-			else {
-				std::cout << "Impossible to reach goal!\n";
-				std::cin.get();
-				return -1;
-			}
-		}
+		step++;
 
 		// Next = minimum cost neighbor
-		next = start->getNext();
-		std::cout << "Current node:\t" << search.getNodeName(*start) << '\n';
-		std::cout << "Next node:\t" << search.getNodeName(*next) << "\n\n";
+		next = current.getNext();
+		std::cout << "Current node:\t" << search.getNodeName(current) << '\n';
+		std::cout << "Next node:\t" << search.getNodeName(next) << "\n\n";
 
 		/* Move to next */
 
 		/* Check for obstacles */
 
 		// If path blocked
-		if (increment == obstacle) {
-			// Example: road blocked from 'start' to 'next'
-			std::cout << "Path blocked! Updating edge cost between " << search.getNodeName(*start) << " and " << search.getNodeName(*next) << "\n\n";
-			increment = 0;
+		if (step > 4) {
+			/* Example: road blocked from 'current' to 'next' */
+			std::cout << "Path blocked! Updating edge cost between " << search.getNodeName(current) << " and " << search.getNodeName(next) << "\n\n";
+			step = 0;
 
 			/* Return to 'start' if necessary */
 
-			// Recalculate shortest path
-			search.km = search.km + search.dist(last, *start);
-			last = *start;
-			if (!search.updateEdgeCost(start, next, std::numeric_limits<float>::infinity())) { // updateEdgeCost returns true if the goal can still be reached, false otherwise
-				std::cout << "Impossible to reach goal!\n";
+			// Recalculate shortest path; Modifies cost between current & next to infinity and recomputes path
+			if (!search.recomputeShortestPath(current, next)) {
+				std::cerr << "Failed to recompute path!\n";
 				std::cin.get();
 				return -1;
 			}
-			search.computeShortestPath();
-
 
 			std::cout << "New path calculated\n\n";
-
-			// Reset next node from new path
 
 			// Start loop over -> try to navigate to the new 'next' node
 			continue;
@@ -97,7 +68,7 @@ int main(int argc, char* argv[])
 
 		// Arrived at next node
 		std::cout << "Arrived at next node!\n\n";
-		start = next;
+		current = next;
 		std::cin.get();
 	}
 	std::cout << "Reached the goal!\n";

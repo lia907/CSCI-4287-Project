@@ -26,7 +26,8 @@ std::pair<Node*, Key> NodePQueue::Top() {
 	if (min_i == -1) {
 		// Queue is Empty -> return NULL node with Key priority of infinity
 		// Triggers end of D* computeShortestPath()
-		return std::make_pair(&Node(), Key());
+		Node *nullNode = NULL;
+		return std::make_pair(nullNode, Key());
 	}
 	return data[min_i];
 }

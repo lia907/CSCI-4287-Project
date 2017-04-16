@@ -3,7 +3,7 @@
 *
 * Author: Will Rooney
 * Date Created: 04/05/2017
-* Date Modified: 04/08/2017
+* Date Modified: 04/16/2017
 *
 * Description: Implementation of dstar.h
 */
@@ -121,7 +121,7 @@ void DStar::computeShortestPath() {
 		std::pair<Node*,Key> top = U.Top();
 		Node *u = top.first;
 		Key k_old = top.second;
-		if (!(k_old < calculateKey(start) || start.rhs > start.g))
+		if (u == NULL || !(k_old < calculateKey(start) || start.rhs > start.g))
 			break;
 
 		Key k_new = calculateKey(*u);
@@ -141,7 +141,7 @@ void DStar::computeShortestPath() {
 				neighbor = u->neighbors[i].first;
 				if (neighbor == NULL)
 					continue;
-				if (*neighbor != nMap[GOAL_NODE]) {
+				else if (*neighbor != nMap[GOAL_NODE]) {
 					neighbor->rhs = std::min(neighbor->rhs, cost(neighbor, u) + u->g);
 				}
 				updateNode(neighbor);
@@ -197,6 +197,41 @@ void DStar::computeShortestPath() {
 	}
 }
 
+bool DStar::recomputeShortestPath(Node &n1, Node n2) {
+	// Find the nMap indexes for n1/n2
+	int i = 0, size = NUM_NODES;
+	Node *current = NULL, *next = NULL;
+	for (; i < size; ++i) {
+		if (n1 == nMap[i]) {
+			current = &nMap[i];
+		}
+		if (n2 == nMap[i]) {
+			next = &nMap[i];
+		}
+	}
+
+	if (current == NULL)
+		current = &start;
+	else {
+		start = *current;
+	}
+
+	if (next == NULL)
+		return false;
+
+	// Recalculate shortest path
+	km = km + dist(last, start);
+	last = start;
+	if (!updateEdgeCost(current, next, std::numeric_limits<float>::infinity()))	{	// updateEdgeCost returns true if the goal can still be reached, false otherwise
+		std::cout << "Impossible to reach goal!\n";
+		return false;
+	}
+	start = *current;
+	computeShortestPath();
+	n1 = *current;
+	return true;
+}
+
 float DStar::cost(Node *u, Node *v) {
 	// Find the edge cost from u to v
 	// Edge cost = distance(u, v) || infinity
@@ -223,18 +258,20 @@ float DStar::dist(Node n1, Node n2) {
 	return dist;
 }
 
-Node *DStar::createStartNode(int n) {
+Node DStar::createStartNode(int n) {
 	if (n < 1 || n >= NUM_NODES) {
 		std::cerr << "[AStar::createStartNode] Error: Node does not exist\n";
-		return NULL;
+		return Node();
 	}
 	start = nMap[n];
-	return &start;
+	last = nMap[n];
+	return start;
 }
 
-Node *DStar::createStartNode(float x, float y, int n1, int n2) {
+Node DStar::createStartNode(float x, float y, int n1, int n2) {
 	start = Node(x, y, &nMap[n1], &nMap[n2], NULL, NULL);
-	return &start;
+	last = start;
+	return start;
 }
 
 Node DStar::initGoalNode(int n) {
@@ -286,91 +323,91 @@ Node DStar::initGoalNode(float x, float y, int n1, int n2) {
 */
 void DStar::initStaticNodes() {
 	// Node #1
-	nMap[1].setPos(2.5, 35.0);
+	nMap[1].setPos(25.0, 350.0);
 	nMap[1].setNeighborNodes(&nMap[2], &nMap[7], NULL, NULL);
 
 	// Node #2
-	nMap[2].setPos(17.5, 37.5);
+	nMap[2].setPos(175.0, 375.0);
 	nMap[2].setNeighborNodes(&nMap[1], &nMap[3], &nMap[4], NULL);
 
 	// Node #3
-	nMap[3].setPos(40.0, 40.0);
+	nMap[3].setPos(400.0, 400.0);
 	nMap[3].setNeighborNodes(&nMap[2], &nMap[11], NULL, NULL);
 
 	// Node #4
-	nMap[4].setPos(12.5, 32.5);
+	nMap[4].setPos(125.0, 325.0);
 	nMap[4].setNeighborNodes(&nMap[2], &nMap[5], &nMap[8], NULL);
 
 	// Node #5
-	nMap[5].setPos(22.5, 32.5);
+	nMap[5].setPos(225.0, 325.0);
 	nMap[5].setNeighborNodes(&nMap[4], &nMap[9], NULL, NULL);
 
 	// Node #6
-	nMap[6].setPos(30.0, 37.5);
+	nMap[6].setPos(300.0, 375.0);
 	nMap[6].setNeighborNodes(&nMap[10], NULL, NULL, NULL);
 
 	// Node #7
-	nMap[7].setPos(2.5, 25.0);
+	nMap[7].setPos(25.0, 250.0);
 	nMap[7].setNeighborNodes(&nMap[1], &nMap[8], &nMap[12], NULL);
 
 	// Node #8
-	nMap[8].setPos(12.5, 25.0);
+	nMap[8].setPos(125.0, 250.0);
 	nMap[8].setNeighborNodes(&nMap[4], &nMap[7], &nMap[9], NULL);
 
 	// Node #9
-	nMap[9].setPos(22.5, 25.0);
+	nMap[9].setPos(225.0, 250.0);
 	nMap[9].setNeighborNodes(&nMap[5], &nMap[8], &nMap[10], &nMap[14]);
 
 	// Node #10
-	nMap[10].setPos(30.0, 25.0);
+	nMap[10].setPos(300.0, 250.0);
 	nMap[10].setNeighborNodes(&nMap[6], &nMap[9], &nMap[11], &nMap[15]);
 
 	// Node #11
-	nMap[11].setPos(40.0, 25.0);
+	nMap[11].setPos(400.0, 250.0);
 	nMap[11].setNeighborNodes(&nMap[3], &nMap[10], &nMap[16], NULL);
 
 	// Node #12
-	nMap[12].setPos(3.0, 15.0);
+	nMap[12].setPos(30.0, 150.0);
 	nMap[12].setNeighborNodes(&nMap[7], &nMap[13], &nMap[20], NULL);
 
 	// Node #13
-	nMap[13].setPos(15.0, 16.0);
+	nMap[13].setPos(150.0, 160.0);
 	nMap[13].setNeighborNodes(&nMap[8], &nMap[12], &nMap[14], &nMap[17]);
 
 	// Node #14
-	nMap[14].setPos(22.5, 16.5);
+	nMap[14].setPos(225.0, 165.0);
 	nMap[14].setNeighborNodes(&nMap[9], &nMap[13], &nMap[15], &nMap[18]);
 
 	// Node #15
-	nMap[15].setPos(30.0, 17.0);
+	nMap[15].setPos(300.0, 170.0);
 	nMap[15].setNeighborNodes(&nMap[10], &nMap[14], &nMap[16], &nMap[21]);
 
 	// Node #16
-	nMap[16].setPos(40.0, 17.5);
+	nMap[16].setPos(400.0, 175.0);
 	nMap[16].setNeighborNodes(&nMap[11], &nMap[15], &nMap[22], NULL);
 
 	// Node #17
-	nMap[17].setPos(15.0, 10.0);
+	nMap[17].setPos(150.0, 100.0);
 	nMap[17].setNeighborNodes(&nMap[13], &nMap[18], NULL, NULL);
 
 	// Node #18
-	nMap[18].setPos(22.5, 10.0);
+	nMap[18].setPos(225.0, 100.0);
 	nMap[18].setNeighborNodes(&nMap[14], &nMap[17], &nMap[19], NULL);
 
 	// Node #19
-	nMap[19].setPos(22.5, 17.0);
+	nMap[19].setPos(225.0, 170.0);
 	nMap[19].setNeighborNodes(&nMap[18], NULL, NULL, NULL);
 
 	// Node #20
-	nMap[20].setPos(9.0, 2.5);
+	nMap[20].setPos(90.0, 25.0);
 	nMap[20].setNeighborNodes(&nMap[12], &nMap[21], NULL, NULL);
 
 	// Node #21
-	nMap[21].setPos(30.0, 2.5);
+	nMap[21].setPos(300.0, 25.0);
 	nMap[21].setNeighborNodes(&nMap[15], &nMap[20], &nMap[22], NULL);
 
 	// Node #22
-	nMap[22].setPos(37.5, 2.5);
+	nMap[22].setPos(375.0, 25.0);
 	nMap[22].setNeighborNodes(&nMap[16], &nMap[21], NULL, NULL);
 
 	/* Calculate Edge Costs */
