@@ -13,7 +13,7 @@
 #define DSTAR_H
 
 #include <stack>
-#include <string>
+//#include <string>
 #include "node_pqueue.h"
 
 class DStar {

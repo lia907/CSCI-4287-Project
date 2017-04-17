@@ -17,7 +17,7 @@ DStar::DStar() {
 }
 
 /* DEBUGGIN/TESTING FUNCTION */
-std::string DStar::getNodeName(Node n) {
+/*std::string DStar::getNodeName(Node n) {
 	int i;
 	for (i = 0; i < NUM_NODES; ++i) {
 		if (nMap[i] == n) {
@@ -28,7 +28,7 @@ std::string DStar::getNodeName(Node n) {
 		}
 	}
 	return "Start";
-}
+}*/
 
 Key DStar::calculateKey(Node s) {
 	return Key(s.g, s.rhs, dist(start, s), km);

@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
 
 		// Next = minimum cost neighbor
 		next = current.getNext();
-		std::cout << "Current node:\t" << search.getNodeName(current) << '\n';
-		std::cout << "Next node:\t" << search.getNodeName(next) << "\n\n";
+		//std::cout << "Current node:\t" << search.getNodeName(current) << '\n';
+		//std::cout << "Next node:\t" << search.getNodeName(next) << "\n\n";
 
 		/* Move to next */
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 		// If path blocked
 		if (step > 4) {
 			/* Example: road blocked from 'current' to 'next' */
-			std::cout << "Path blocked! Updating edge cost between " << search.getNodeName(current) << " and " << search.getNodeName(next) << "\n\n";
+			//std::cout << "Path blocked! Updating edge cost between " << search.getNodeName(current) << " and " << search.getNodeName(next) << "\n\n";
 			step = 0;
 
 			/* Return to 'start' if necessary */

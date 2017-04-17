@@ -14,9 +14,10 @@
 #ifndef NODE_H_DSTAR
 #define NODE_H_DSTAR
 
+#include <cstddef>
 #include <limits>
+#include <math.h>
 #include <vector>
-#include <iostream>
 
 #define NODE_MAX_NEIGHBORS 	4	// Maximum number of paths that can be taken from a particular node 4
 #define NUM_NODES			23	// Graph size = 22 Nodes + Goal Node
